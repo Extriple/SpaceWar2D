@@ -5,12 +5,17 @@ using UnityEngine;
 
 public class ResourceGenerator : MonoBehaviour
 {
+    private BuildingTypeSO _buildingTypeSo;
+    
+    
     private float timer;
     private float timerMax;
 
     private void Awake()
     {
-        timerMax = 1f;
+        _buildingTypeSo = GetComponent<BuildingTypeHolder>().buildingTypeSo; 
+        //Get active resource generator
+        timerMax = _buildingTypeSo.resourceGeneratorData.timerMax;
     }
 
     private void Update()
@@ -19,7 +24,8 @@ public class ResourceGenerator : MonoBehaviour
         if (timer < 0f)
         {
             timer += timerMax;
-            Debug.Log("Ding");
+            Debug.Log("Ding" + _buildingTypeSo.resourceGeneratorData.resourceType.nameString);
+            ResourceManager.Instance.AddResource(_buildingTypeSo.resourceGeneratorData.resourceType, 1);
 
         }
     }

@@ -5,11 +5,16 @@ using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
 {
+   public static ResourceManager Instance { get; private set; }
+   
+
    //Key and value
    private Dictionary<ResourceTypeSO, int> resourceAmmountDictionary;
 
    private void Awake()
    {
+      Instance = this;
+      
       resourceAmmountDictionary = new Dictionary<ResourceTypeSO, int>();
       //Load resources with ScriptableObjects
       ResourceTypeListSO resourceTypeList = Resources.Load<ResourceTypeListSO>(typeof(ResourceTypeListSO).Name);
@@ -45,5 +50,6 @@ public class ResourceManager : MonoBehaviour
    public void AddResource(ResourceTypeSO resourceType, int amount)
    {
       resourceAmmountDictionary[resourceType] += amount;
+      TestLog();
    }
 }

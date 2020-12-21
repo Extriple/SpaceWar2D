@@ -7,6 +7,6 @@ using UnityEngine;
 public class ResourceGeneratorData
 {
     public float timerMax;
-    public Transform prefab;
+    public ResourceTypeSO resourceType;
     
 }
