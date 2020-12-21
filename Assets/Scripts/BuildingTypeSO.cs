@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "ScriptableObjects/BuildingType")]
+[CreateAssetMenu(menuName = "ScriptableObjects/BuildingTypes")]
 public class BuildingTypeSO : ScriptableObject
 {
    public string name;
    public Transform prefab;
+   public ResourceGeneratorData resourceGeneratorData;
 }

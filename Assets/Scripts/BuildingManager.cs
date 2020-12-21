@@ -13,7 +13,7 @@ public class BuildingManager : MonoBehaviour
     private void Awake()
     {
         //Load the resources
-        buildingListTypeSo = Resources.Load<BuildingListTypeSO>(nameof(BuildingListTypeSO));
+        buildingListTypeSo = Resources.Load<BuildingListTypeSO>(typeof(BuildingListTypeSO).Name);
         
         //Load the scriptable objects with resources and set list on 0 // default
         buildingTypeSo = buildingListTypeSo.list[0];

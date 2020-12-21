@@ -12,21 +12,38 @@ public class ResourceManager : MonoBehaviour
    {
       resourceAmmountDictionary = new Dictionary<ResourceTypeSO, int>();
       //Load resources with ScriptableObjects
-      ResourceTypeListSO resourceTypeList = Resources.Load<ResourceTypeListSO>(nameof(ResourceTypeListSO));
+      ResourceTypeListSO resourceTypeList = Resources.Load<ResourceTypeListSO>(typeof(ResourceTypeListSO).Name);
 
       foreach (ResourceTypeSO resourceType in resourceTypeList.list)
       {
          resourceAmmountDictionary[resourceType] = 0;
+      }
+      TestLog();
+   }
+
+   private void Update()
+   {
+      if (Input.GetKeyDown(KeyCode.A))
+      {
+         ResourceTypeListSO resourceTypeList = Resources.Load<ResourceTypeListSO>(nameof(ResourceTypeListSO));
+         //Add 2 wood 
+         AddResource(resourceTypeList.list[0], 2);
+         TestLog();
+
       }
    }
 
    private void TestLog()
    {
       //Show resource type for example wood, stone, gold in console
-      foreach (ResourceTypeSO resourceTypeSo in resourceAmmountDictionary.Keys)
+      foreach (ResourceTypeSO resourceType in resourceAmmountDictionary.Keys)
       {
-         Debug.Log(resourceTypeSo.nameString + ": " + resourceAmmountDictionary[resourceTypeSo] );
+         Debug.Log(resourceType.nameString + ": " + resourceAmmountDictionary[resourceType]);
       }
-      
+   }
+
+   public void AddResource(ResourceTypeSO resourceType, int amount)
+   {
+      resourceAmmountDictionary[resourceType] += amount;
    }
 }
