@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7988448530749714521}
   - component: {fileID: -4535508669164760061}
   - component: {fileID: -6989575542638866994}
+  - component: {fileID: 1318172449077017152}
   m_Layer: 0
   m_Name: pfStoneHarvester
   m_TagString: Untagged
@@ -109,3 +110,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingTypeSo: {fileID: 11400000, guid: 95ee4ff35ec8f6c4bb336f326046e893, type: 2}
+--- !u!61 &1318172449077017152
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646195004225110161}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.05917144, y: -0.10354996}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 6.8057113, y: 5.3535156}
+    newSize: {x: 6.805486, y: 5.330078}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 5.681227, y: 4.472088}
+  m_EdgeRadius: 0

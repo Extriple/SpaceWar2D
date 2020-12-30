@@ -9,6 +9,7 @@ public class BuildingTypeSelectUI : MonoBehaviour
 {
     [SerializeField] private Sprite arrowSprite;
     
+    
     private Dictionary<BuildingTypeSO, Transform> btnTransformDir;
     private Transform arrowButton;
     
