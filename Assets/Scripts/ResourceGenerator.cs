@@ -5,27 +5,56 @@ using UnityEngine;
 
 public class ResourceGenerator : MonoBehaviour
 {
-    private BuildingTypeSO _buildingTypeSo;
-    
+
+    private ResourceGeneratorData resourceGeneratorData;
     
     private float timer;
     private float timerMax;
 
     private void Awake()
     {
-        _buildingTypeSo = GetComponent<BuildingTypeHolder>().buildingTypeSo; 
+        resourceGeneratorData = GetComponent<BuildingTypeHolder>().buildingTypeSo.resourceGeneratorData; 
         //Get active resource generator
-        timerMax = _buildingTypeSo.resourceGeneratorData.timerMax;
+        timerMax = resourceGeneratorData.timerMax;
     }
 
+    private void Start()
+    {
+        Collider2D[] collider2Darray =  Physics2D.OverlapCircleAll(transform.position, resourceGeneratorData.resourceDecetionRadius);
+
+        int ResourceAmounmt = 0;
+        foreach (Collider2D collider2D in collider2Darray)
+        {
+            ResourceNode resourceNode = collider2D.GetComponent<ResourceNode>();
+            if (resourceNode != null)
+            {
+                if (resourceNode.resourceTypeSo == resourceGeneratorData.resourceType)
+                {
+                    ResourceAmounmt++;
+                }
+            }
+        }
+
+        ResourceAmounmt = Mathf.Clamp(ResourceAmounmt, 0, resourceGeneratorData.maxResourceAmount);
+
+        if (ResourceAmounmt == 0)
+        {
+            enabled = false;
+        }
+        else
+        {
+            timerMax = (resourceGeneratorData.timerMax / 2f) + resourceGeneratorData.timerMax *
+                (1 - (float) ResourceAmounmt / resourceGeneratorData.timerMax);
+        }
+    }
+    
     private void Update()
     {
         timer -= Time.deltaTime;
         if (timer < 0f)
         {
             timer += timerMax;
-            Debug.Log("Ding" + _buildingTypeSo.resourceGeneratorData.resourceType.nameString);
-            ResourceManager.Instance.AddResource(_buildingTypeSo.resourceGeneratorData.resourceType, 1);
+            ResourceManager.Instance.AddResource(resourceGeneratorData.resourceType, 1);
 
         }
     }
