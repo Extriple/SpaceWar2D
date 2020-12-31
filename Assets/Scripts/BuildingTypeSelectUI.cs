@@ -8,7 +8,7 @@ using Object = System.Object;
 public class BuildingTypeSelectUI : MonoBehaviour
 {
     [SerializeField] private Sprite arrowSprite;
-    
+    [SerializeField] private List<BuildingTypeSO> ignoreBuildingTypeList;
     
     private Dictionary<BuildingTypeSO, Transform> btnTransformDir;
     private Transform arrowButton;
@@ -83,6 +83,8 @@ public class BuildingTypeSelectUI : MonoBehaviour
         arrowButton.Find("selected").gameObject.SetActive(false);
         foreach (BuildingTypeSO buildingTypeSo in btnTransformDir.Keys)
         {
+            if (ignoreBuildingTypeList.Contains(buildingTypeSo)) continue;
+            
             Transform btnTransform = btnTransformDir[buildingTypeSo];
             btnTransform.Find("selected").gameObject.SetActive(false);
         }
