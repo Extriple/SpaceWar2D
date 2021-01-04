@@ -42,10 +42,21 @@ public class BuildingTypeSelectUI : MonoBehaviour
             BuildingManager.Instance.SetActiveBuildingType(null);
         });
         
+        MouseEnterExitEvent mouseEnterExitEvent =  arrowButton.GetComponent<MouseEnterExitEvent>();
+        mouseEnterExitEvent.OnMouseEnter += (object sender, EventArgs e) =>
+        {
+            ToolTipUI.Instance.Show("Arrow");
+        };
+        mouseEnterExitEvent.onMouseExit += (object sender, EventArgs e) =>
+        {
+            ToolTipUI.Instance.Hide();
+        };
+        
         index++;
         
         foreach (BuildingTypeSO buildingTypeSo in buildingListTypeSo.list)
         { 
+            if (ignoreBuildingTypeList.Contains(buildingTypeSo)) continue;
             Transform btnTransform = Instantiate(btnTemplate, transform);
             btnTransform.gameObject.SetActive(true);
          
@@ -55,11 +66,22 @@ public class BuildingTypeSelectUI : MonoBehaviour
 
             btnTemplate.Find("image").GetComponent<Image>().sprite = buildingTypeSo.sprite;
          
-         //Event system 
+         //Event system  
                 btnTransform.GetComponent<Button>().onClick.AddListener(() =>
                 {
                 BuildingManager.Instance.SetActiveBuildingType(buildingTypeSo);
                 });
+
+                mouseEnterExitEvent = btnTransform.GetComponent<MouseEnterExitEvent>();
+                mouseEnterExitEvent.OnMouseEnter += (object sender, EventArgs e) =>
+                {
+                    ToolTipUI.Instance.Show(buildingTypeSo.name + "\n" + buildingTypeSo.GetConstructionResourceCostString());
+                };
+                mouseEnterExitEvent.onMouseExit += (object sender, EventArgs e) =>
+                {
+                    ToolTipUI.Instance.Hide();
+                };
+                
 
          btnTransformDir[buildingTypeSo] = btnTransform;
          
@@ -83,8 +105,6 @@ public class BuildingTypeSelectUI : MonoBehaviour
         arrowButton.Find("selected").gameObject.SetActive(false);
         foreach (BuildingTypeSO buildingTypeSo in btnTransformDir.Keys)
         {
-            if (ignoreBuildingTypeList.Contains(buildingTypeSo)) continue;
-            
             Transform btnTransform = btnTransformDir[buildingTypeSo];
             btnTransform.Find("selected").gameObject.SetActive(false);
         }

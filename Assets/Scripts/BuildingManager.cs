@@ -14,6 +14,8 @@ public class BuildingManager : MonoBehaviour
     {
         public BuildingTypeSO buildingTypeSo;
     }
+
+    [SerializeField] private Building hqBuilding;
     
     private BuildingTypeSO activeBuildingTypeSo;
     private BuildingListTypeSO buildingListTypeSo;
@@ -40,79 +42,108 @@ public class BuildingManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (activeBuildingTypeSo != null && CanSpawnBuilding(activeBuildingTypeSo, UtilsClass.GetMouseWorldPosition()))
+            if (activeBuildingTypeSo != null)
             {
-                //Clone the WoodHarvester
-                Instantiate(activeBuildingTypeSo.prefab,  UtilsClass.GetMouseWorldPosition(), Quaternion.identity);
-            }
-
-            Debug.Log(CanSpawnBuilding(buildingListTypeSo.list[0], UtilsClass.GetMouseWorldPosition()));
-        }
-    }
-    
-   
-
-    private Vector3 mouseWorldPos()
-    {
-        //We return mouse position on the screen
-        Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0f;
-        return mousePosition;
-    }
-
-    public void SetActiveBuildingType(BuildingTypeSO buildingTypeSo)
-    {
-        activeBuildingTypeSo = buildingTypeSo;
-        
-        OnActiveBuildingChange?.Invoke(
-            this,
-            new OnActiveBuildingTypeChangeEventArgs {buildingTypeSo = buildingTypeSo}
-            );
-    }
-
-    public BuildingTypeSO GetBuildingType()
-    {
-        return activeBuildingTypeSo;
-    }
-
-    private bool CanSpawnBuilding(BuildingTypeSO buildingTypeSo, Vector3 position)
-    {
-        BoxCollider2D boxCollider2D = buildingTypeSo.prefab.GetComponent<BoxCollider2D>();
-
-        Collider2D[] collider2DArray = Physics2D.OverlapBoxAll(position + (Vector3)boxCollider2D.offset, boxCollider2D.size, 0);
-
-        bool isArenaCleaer = collider2DArray.Length == 0;
-        if (!isArenaCleaer) return false;
-
-       collider2DArray = Physics2D.OverlapCircleAll(position, buildingTypeSo.minConstractionRadius);
-
-        foreach (Collider2D collider2D in collider2DArray)
-        {
-            BuildingTypeHolder buildingTypeHolder = collider2D.GetComponent<BuildingTypeHolder>();
-            if (buildingTypeHolder != null)
-            {
-                //Has buildingtype holder
-                if (buildingTypeHolder.buildingTypeSo == buildingTypeSo)
+                if (CanSpawnBuilding(activeBuildingTypeSo, UtilsClass.GetMouseWorldPosition(), out string errorMsg))
                 {
-                    //bulding of this with the contruction radius 
-                    return false;
+                    if (ResourceManager.Instance.CanAfford(activeBuildingTypeSo.conctructionResourceCost))
+                    {
+                        ResourceManager.Instance.SpendResource(activeBuildingTypeSo.conctructionResourceCost);
+                        Instantiate(activeBuildingTypeSo.prefab, UtilsClass.GetMouseWorldPosition(),
+                            Quaternion.identity);
+                    }
+                    else
+                    {
+                        ToolTipUI.Instance.Show("Cannot afford + " + activeBuildingTypeSo.GetConstructionResourceCostString(), new ToolTipUI.ToolTipTimer{timer = 2f});
+                    }
+                }
+                else
+                {
+                    ToolTipUI.Instance.Show(errorMsg, new ToolTipUI.ToolTipTimer{timer = 2f});
                 }
             }
         }
 
-        float maxContractionRadius = 25;
-        collider2DArray = Physics2D.OverlapCircleAll(position, maxContractionRadius);
-
-        foreach (Collider2D collider2D in collider2DArray)
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            BuildingTypeHolder buildingTypeHolder = collider2D.GetComponent<BuildingTypeHolder>();
-            if (buildingTypeHolder != null)
-            {
-                return true;
-            }
+            Vector3 enemySpawnPosition = UtilsClass.GetMouseWorldPosition() + UtilsClass.GetRandomDir() * 5f;
+            Enemy.Create(enemySpawnPosition);
+        }
+    }
+
+    private Vector3 mouseWorldPos()
+        {
+            //We return mouse position on the screen
+            Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0f;
+            return mousePosition;
         }
 
-        return false;
-    }
+        public void SetActiveBuildingType(BuildingTypeSO buildingTypeSo)
+        {
+            activeBuildingTypeSo = buildingTypeSo;
+        
+            OnActiveBuildingChange?.Invoke(
+                this,
+                new OnActiveBuildingTypeChangeEventArgs {buildingTypeSo = buildingTypeSo}
+            );
+        }
+
+        public BuildingTypeSO GetBuildingType()
+        {
+            return activeBuildingTypeSo;
+        }
+
+        private bool CanSpawnBuilding(BuildingTypeSO buildingTypeSo, Vector3 position, out string errorMsg)
+        {
+            BoxCollider2D boxCollider2D = buildingTypeSo.prefab.GetComponent<BoxCollider2D>();
+
+            Collider2D[] collider2DArray = Physics2D.OverlapBoxAll(position + (Vector3)boxCollider2D.offset, boxCollider2D.size, 0);
+
+            bool isArenaCleaer = collider2DArray.Length == 0;
+            if (!isArenaCleaer)
+            {
+                errorMsg = "Area is not clear";
+                return false;
+            }
+
+            collider2DArray = Physics2D.OverlapCircleAll(position, buildingTypeSo.minConstractionRadius);
+
+            foreach (Collider2D collider2D in collider2DArray)
+            {
+                BuildingTypeHolder buildingTypeHolder = collider2D.GetComponent<BuildingTypeHolder>();
+                if (buildingTypeHolder != null)
+                {
+                    //Has buildingtype holder
+                    if (buildingTypeHolder.buildingTypeSo == buildingTypeSo)
+                    {
+                        //bulding of this with the contruction radius 
+                        errorMsg = "So close to oher building with the same type";
+                        return false;
+                    }
+                }
+            }
+
+            float maxContractionRadius = 25;
+            collider2DArray = Physics2D.OverlapCircleAll(position, maxContractionRadius);
+
+            foreach (Collider2D collider2D in collider2DArray)
+            {
+                BuildingTypeHolder buildingTypeHolder = collider2D.GetComponent<BuildingTypeHolder>();
+                if (buildingTypeHolder != null)
+                {
+                    errorMsg = "";
+                    return true;
+                }
+            }
+
+            errorMsg = "To far from any other building"; 
+            return false;
+        }
+
+        public Building GetHQBuilding()
+        {
+            return hqBuilding;
+        }
 }
 

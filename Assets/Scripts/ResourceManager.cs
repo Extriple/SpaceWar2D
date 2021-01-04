@@ -26,7 +26,7 @@ public class ResourceManager : MonoBehaviour
       }
    }
 
-   private void Update()
+   /*private void Update()
    {
       if (Input.GetKeyDown(KeyCode.A))
       {
@@ -36,7 +36,7 @@ public class ResourceManager : MonoBehaviour
          TestLog();
 
       }
-   }
+   }*/
 
    private void TestLog()
    {
@@ -51,16 +51,35 @@ public class ResourceManager : MonoBehaviour
    {
       resourceAmmountDictionary[resourceType] += amount;
       onResourceAmmountChange? .Invoke(this,EventArgs.Empty);
-
-      /*if (onResourceAmmountChange != null)
-      {
-         onResourceAmmountChange(this,EventArgs.Empty);
-      }*/
-      
    }
 
    public int GetResourceAmount(ResourceTypeSO resourceTypeSo)
    {
       return resourceAmmountDictionary[resourceTypeSo];
+   }
+
+   public bool CanAfford(ResourceAmount[] resourceAmounts)
+   {
+      foreach (ResourceAmount resourceAmount in resourceAmounts)
+      {
+         if (GetResourceAmount(resourceAmount.resourceTypeSo) >= resourceAmount.amount)
+         {
+            //Can afford
+         }
+         else
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   public void SpendResource(ResourceAmount[] resourceAmounts)
+   {
+      foreach (ResourceAmount resourceAmount in resourceAmounts)
+      {
+         resourceAmmountDictionary[resourceAmount.resourceTypeSo] -= resourceAmount.amount;
+      }
    }
 }
