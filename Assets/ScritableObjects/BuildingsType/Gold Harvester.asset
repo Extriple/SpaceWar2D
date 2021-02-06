@@ -25,3 +25,4 @@ MonoBehaviour:
   - resourceTypeSo: {fileID: 11400000, guid: 91cd82e3e4380244f966da63525f3ce5, type: 2}
     amount: 40
   healthAmountMax: 100
+  hasResourceGeneratorData: 1

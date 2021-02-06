@@ -20,6 +20,6 @@ public class Building : MonoBehaviour
 
     private void HealthSystem_OnDie(object sender, System.EventArgs e)
     {
-        DestroyImmediate(gameObject);
+        Destroy(gameObject);
     }
 }
